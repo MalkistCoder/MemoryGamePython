@@ -1,34 +1,39 @@
 from time import sleep
 from os import system
-import random, re
+import random, re, io
 
 try:
     from colorama import Fore, Style, init # For colored text
     
     init(True)
 except ModuleNotFoundError:
-    print('''
+    install_automatically = input('''
 --------------------------
-          Warning!
+         Warning!
 You do not have the module
 colorama installed. Please
 open your command prompt
 and install the colorama 
 module.
 
-To install, type:
+To install manually, type:
   pip install colorama
---------------------------''')
+  
+Or, type "install" and
+press Enter to install
+automatically.
+
+Otherwise, just press
+Enter to exit.
+--------------------------
+: ''').lower() == 'install'
+    if install_automatically:
+        system('pip install -r requirements.txt') # Installs packages
+        print('Re-run the Python file to play the game!')
     exit()
 
-tile_choices = random.choice([list(emojis) for emojis in # Convert to list
-    [
-        '🟧🟥🟨🟩🟦🟪🟫⬛',
-        '😀🤣😅😎😍🤔😏😭',
-        '🎉🎈👖👑💎🍕🎣🎮',
-        '🌭🍿🍟🍔🍕🥞🍣🍜'
-    ] # Emojis to use
-])
+with io.open('emojis.txt', 'r', encoding='utf-8') as f: # Loads from file
+    tile_choices = random.choice([list(emojis)[:8] for emojis in f.readlines()])
 
 tiles = [ # Set to -1 because its just a placeholder value for now :D
     -1, -1, -1, -1,
@@ -51,7 +56,6 @@ for tile_choice in range(8): # Initializes tiles
     
     tiles[first_choice] = tile_choice
     tiles[second_choice] = tile_choice
-
 
 def display_tiles(show: list=[]) -> None:
     rendered_tiles = [tile_choices[tile_id] if index in show else '🔳' for index, tile_id in enumerate(tiles)] # Uhh idk it works tho
@@ -96,9 +100,20 @@ while len(found_tiles) < 16:
         elif first_choice == 'Q': # If quit
             clear()
             display_tiles(range(16))
-            break
+            print(f'{Fore.YELLOW}{Style.BRIGHT}You gave up.')
+            exit()
         else:
             print(f'{Fore.RED}Invalid!')
+    
+    clear()
+    
+    display_tiles(found_tiles + [first_choice_index])
+    print(f'Select {Fore.GREEN}2{Fore.RESET} tiles, or type {Fore.YELLOW}q{Fore.RESET} to give up.')
+    print(f'    {Fore.BLUE}Example:')
+    print(f'        First tile: {Fore.YELLOW}A1')
+    print(f'        Second tile: {Fore.YELLOW}D2')
+    print('')
+    print(f'{Fore.BLUE}First tile{Style.RESET_ALL}: {first_choice}')
     
     valid_second_tile = False
     second_choice = ''
@@ -113,15 +128,16 @@ while len(found_tiles) < 16:
         elif second_choice == 'Q': # If quit
             clear()
             display_tiles(range(16))
+            print(f'{Fore.YELLOW}{Style.BRIGHT}You gave up.')
             exit()
         else:
             print(f'{Fore.RED}Invalid!')
     
     clear()
     
-    display_tiles([first_choice_index, second_choice_index] + found_tiles)
+    display_tiles(found_tiles + [first_choice_index, second_choice_index])
     
-    if tiles[first_choice_index] == tiles[second_choice_index]:
+    if tiles[first_choice_index] == tiles[second_choice_index]: # If the tiles match
         print(f'{Style.BRIGHT}{Fore.RED}M{Fore.YELLOW}A{Fore.GREEN}T{Fore.CYAN}C{Fore.BLUE}H{Fore.MAGENTA}!{Style.RESET_ALL} You found the {tile_choices[tiles[first_choice_index]]} pair!')
         found_tiles += [first_choice_index, second_choice_index] # Adds the pair to the show index
     
