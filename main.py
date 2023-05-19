@@ -96,7 +96,7 @@ while len(found_tiles) < 16:
         elif first_choice == 'Q': # If quit
             clear()
             display_tiles(range(16))
-            exit()
+            break
         else:
             print(f'{Fore.RED}Invalid!')
     
@@ -129,3 +129,5 @@ while len(found_tiles) < 16:
         print(f'{Style.BRIGHT}{Fore.GREEN}YOU WIN!')
     else:
         sleep(3)
+        
+input('Press Enter to quit.')
