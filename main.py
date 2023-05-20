@@ -1,6 +1,7 @@
 from time import sleep
 from os import system
 import random, re, io
+import sys.argv
 
 try:
     from colorama import Fore, Style, init # For colored text
@@ -32,8 +33,14 @@ Enter to exit.
         print('Re-run the Python file to play the game!')
     exit()
 
-with io.open('emojis.txt', 'r', encoding='utf-8') as f: # Loads from file
-    tile_choices = random.choice([list(emojis)[:8] for emojis in f.readlines()])
+tile_choices = random.choice([list(emojis) for emojis in # Convert to list
+    [
+        '🟧🟥🟨🟩🟦🟪🟫⬛',
+        '😀🤣😅😎😍🤔😏😭',
+        '🎉🎈👖👑💎🍕🎣🎮',
+        '🌭🍿🍟🍔🍕🥞🍣🍜'
+    ] # Emojis to use
+])
 
 tiles = [ # Set to -1 because its just a placeholder value for now :D
     -1, -1, -1, -1,
